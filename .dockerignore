@@ -1,0 +1,15 @@
+# Spring/Java files
+target/
+.classpath
+.settings
+.project
+bin
+
+# Tailwind files
+src/main/resources/static/css/output.css
+
+# Secrets (necessary)
+# .env
+
+# Database files (needs to be in the volume)
+# data*
