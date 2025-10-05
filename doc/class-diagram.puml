@@ -1,0 +1,120 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+hide circle
+
+package "net.ddns.pray" {
+    class EngsoftApplication
+    class LoginController
+    class SecurityConfig
+}
+
+package "net.ddns.pray.contact.domain" {
+    class ContactController {
+        - contactService: ContactService
+        + getIndex(int, Model): String
+        + getSearch(String, int, Model): String
+        + getAddContactPage(Model): String
+        + addContact(Contact, BindingResult, Model, RedirectAttributes): String
+        + getDeleteConfirmPage(int, Model): String
+        + deleteContact(int, RedirectAttributes, Model): String
+        + getDeleteByPrefixPage(Model): String
+        + deleteByPrefix(String, Model, RedirectAttributes): String
+    }
+
+    interface ContactService {
+        + getContactPage(int): Page<Contact>
+        + getContactCount(): int
+        + getContactByPhoneNo(String, int): Page<Contact>
+        + addContact(Contact): int
+        + deleteContact(int): int
+        + getContactById(int): Contact
+        + deleteContactByPrefix(String): int
+    }
+
+    class ContactServiceImpl implements ContactService {
+        - contactDao: ContactDao
+        - PAGE_SIZE: int
+        + getContactPage(int): Page<Contact>
+        + getContactCount(): int
+        + getContactByPhoneNo(String, int): Page<Contact>
+        + addContact(Contact): int
+        + deleteContact(int): int
+        + getContactById(int): Contact
+        + deleteContactByPrefix(String): int
+    }
+
+    interface ContactDao {
+        + findPage(int, int): List<Contact>
+        + countTotal(): int
+        + countTotalByPhoneNo(String): int
+        + selectContactByPhoneNo(String, int, int): List<Contact>
+        + addContact(Contact): int
+        + deleteContact(int): int
+        + selectContactById(int): Optional<Contact>
+        + deleteContactByPrefix(String): int
+    }
+
+    class ContactDaoImpl implements ContactDao {
+        - namedParameterJdbcTemplate: NamedParameterJdbcTemplate
+        + findPage(int, int): List<Contact>
+        + countTotal(): int
+        + countTotalByPhoneNo(String): int
+        + selectContactByPhoneNo(String, int, int): List<Contact>
+        + addContact(Contact): int
+        + deleteContact(int): int
+        + selectContactById(int): Optional<Contact>
+        + deleteContactByPrefix(String): int
+    }
+
+    class Contact {
+        - id: Integer
+        - name: String
+        - dateOfBirth: String
+        - phoneNo: String
+        - email: String
+    }
+
+    class PhoneBook {
+        - contacts: List<Contact>
+    }
+
+    class ContactRowMapper implements RowMapper<Contact> {
+        + mapRow(ResultSet, int): Contact
+    }
+}
+
+package "net.ddns.pray.contact.presentation" {
+    class Page<T> {
+        - content: List<T>
+        - currentPage: int
+        - totalItems: int
+        - totalPages: int
+        - pageSize: int
+    }
+
+    class Breadcrumbs<T> {
+        - items: List<T>
+    }
+
+    record BreadcrumbItem {
+        - path: String
+        - name: String
+    }
+}
+
+' Relationships
+ContactController --> ContactService
+ContactServiceImpl --> ContactDao
+ContactDaoImpl --> ContactRowMapper
+ContactController ..> PhoneBook
+ContactController ..> Page
+ContactController ..> Breadcrumbs
+ContactController ..> BreadcrumbItem
+ContactController ..> Contact
+ContactServiceImpl ..> Page
+ContactServiceImpl ..> Contact
+ContactDaoImpl ..> Contact
+PhoneBook "1" *-- "0..*" Contact
+
+@enduml
