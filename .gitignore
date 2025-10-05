@@ -1,0 +1,15 @@
+# Spring/Java files
+target/
+.classpath
+.settings
+.project
+bin
+
+# Tailwind files
+src/main/resources/static/css/output.css
+
+# Secrets
+.env
+
+# Database files
+data*
