@@ -1,3 +1,5 @@
+# Diagrams on /doc
+
 # Prerequisites
 
 - Java 21
